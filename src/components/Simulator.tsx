@@ -3,7 +3,7 @@ import { SIMULATOR_SIZE, BOX_SIZE, COLORS } from "../constants";
 
 import { Node, Status } from "../engine";
 
-const Simulator = ({ nodes }: { nodes: Node[] }) => (
+const Simulator: React.FC<{ nodes: Node[] }> = ({ nodes }) => (
   <svg
     width={SIMULATOR_SIZE}
     height={SIMULATOR_SIZE}
@@ -12,7 +12,7 @@ const Simulator = ({ nodes }: { nodes: Node[] }) => (
       overflow: "hidden",
     }}
   >
-    {nodes.map(({ id, x, y, status, links }) => (
+    {nodes.map(({ id, x, y, links }) => (
       <g key={`links-${id}`}>
         {links.map(({ id: id2, x: x2, y: y2 }) => (
           <line
@@ -27,7 +27,7 @@ const Simulator = ({ nodes }: { nodes: Node[] }) => (
         ))}
       </g>
     ))}
-    {nodes.map(({ id, x, y, status, links }) => (
+    {nodes.map(({ id, x, y, status }) => (
       <g key={id}>
         <circle
           cx={x}
