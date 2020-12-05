@@ -21,8 +21,8 @@ const Simulator = ({ nodes }: { nodes: Node[] }) => (
             y1={y}
             x2={x2}
             y2={y2}
-            stroke="#aaa"
-            strokeWidth={0.5}
+            stroke="#ddd"
+            strokeWidth={0.8}
           />
         ))}
       </g>

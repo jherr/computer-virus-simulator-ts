@@ -1,5 +1,5 @@
 export const COLORS = {
-  [-1]: "#ccc",
+  [-1]: "#666",
   0: "darkblue",
   1: "red",
 };
