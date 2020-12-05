@@ -2,7 +2,7 @@
 
 A rough starting point for a network virus simulator
 
-![./images/examples.gif](Example Run)
+![images/examples.gif](Example Run)
 
 ## Installation
 
