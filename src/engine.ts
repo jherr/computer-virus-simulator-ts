@@ -14,6 +14,7 @@ export interface Node {
   status: Status; // Health status
   sickness: number; // Countdown timer when sick
   links: Node[]; // Links to other nodes
+  isBeingAttacked: boolean; // True if the node is being attacked
 }
 
 export interface Counts {
@@ -61,11 +62,12 @@ export const generateNodes = (state: State): Node[] => {
 
   // Create the initial set of nodes
   const nodes: Node[] = new Array(NODES).fill({}).map((n, i) => ({
-    ...grabPosition(),
     id: i,
+    ...grabPosition(),
     status: i === 0 ? Status.Sick : Status.Healthy,
     sickness: state.infectionLength,
-    links: [],
+    links: [] as Node[],
+    isBeingAttacked: false,
   }));
 
   // Build the kd-tree from the nodes
@@ -85,16 +87,6 @@ export const generateNodes = (state: State): Node[] => {
   return nodes;
 };
 
-// Update all the nodes for a generation
-export const runGenerationOnNode = (node: Node) => {
-  if (node.status === Status.Sick && node.sickness > 0) {
-    node.sickness -= 0.2;
-    if (node.sickness < 1) {
-      node.status = Status.Recovered;
-    }
-  }
-};
-
 // Run an entire generation on all the nodes in the simulation
 export const runGeneration = (state: State) => {
   if (state.paused) {
@@ -102,19 +94,28 @@ export const runGeneration = (state: State) => {
   }
 
   // Adjust each node's status
-  state.nodes.forEach(runGenerationOnNode);
+  state.nodes.forEach((node: Node) => {
+    node.isBeingAttacked = false;
+    if (node.status === Status.Sick && node.sickness > 0) {
+      node.sickness -= 0.2;
+      if (node.sickness < 1) {
+        node.status = Status.Recovered;
+      }
+    }
+  });
 
   // Go through all the sick nodes and see if they infect anyone
   state.nodes
     .filter(({ status }) => status === Status.Sick)
     .forEach((node) => {
       node.links.forEach((target: Node) => {
-        if (
-          target.status === Status.Healthy &&
-          Math.random() < state.infectionRate
-        ) {
-          target.status = Status.Sick;
-          target.sickness = state.infectionLength;
+        if (target.status === Status.Healthy) {
+          if (Math.random() < state.infectionRate) {
+            target.status = Status.Sick;
+            target.sickness = state.infectionLength;
+          } else {
+            target.isBeingAttacked = true;
+          }
         }
       });
     });
@@ -150,7 +151,7 @@ export const runGeneration = (state: State) => {
 // Create the initial status
 export const createInitialState = (
   state: State = {
-    infectionRate: 0.06,
+    infectionRate: 0.02,
     infectionLength: 14,
     generations: [],
     generation: 0,

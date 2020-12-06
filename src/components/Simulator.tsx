@@ -1,5 +1,7 @@
 import React from "react";
-import { SIMULATOR_SIZE, BOX_SIZE, COLORS } from "../constants";
+import clsx from "clsx";
+
+import { SIMULATOR_SIZE, BOX_SIZE, COLORS, CLASSES } from "../constants";
 
 import { Node, Status } from "../engine";
 
@@ -12,22 +14,26 @@ const Simulator: React.FC<{ nodes: Node[] }> = ({ nodes }) => (
       overflow: "hidden",
     }}
   >
-    {nodes.map(({ id, x, y, links }) => (
+    {nodes.map(({ status, id, x, y, links }) => (
       <g key={`links-${id}`}>
-        {links.map(({ id: id2, x: x2, y: y2 }) => (
+        {links.map(({ status: status2, id: id2, x: x2, y: y2 }) => (
           <line
             key={[id, id2, x, y, x2, y2].join(":")}
             x1={x}
             y1={y}
             x2={x2}
             y2={y2}
-            stroke="#ddd"
+            stroke={
+              status === Status.Sick && status2 === Status.Healthy
+                ? COLORS[Status.Sick]
+                : "#ddd"
+            }
             strokeWidth={0.8}
           />
         ))}
       </g>
     ))}
-    {nodes.map(({ id, x, y, status }) => (
+    {nodes.map(({ id, x, y, status, isBeingAttacked }) => (
       <g key={id}>
         <circle
           cx={x}
@@ -36,10 +42,10 @@ const Simulator: React.FC<{ nodes: Node[] }> = ({ nodes }) => (
           style={{
             stroke: "none",
             strokeWidth: 0,
-            fill: COLORS[status],
           }}
+          className={clsx(CLASSES[status], isBeingAttacked && "under-attack")}
         />
-        {status === Status.Sick && (
+        {isBeingAttacked && (
           <circle
             cx={x}
             cy={y}
@@ -48,8 +54,8 @@ const Simulator: React.FC<{ nodes: Node[] }> = ({ nodes }) => (
               stroke: COLORS[status],
               strokeWidth: 1,
               strokeOpacity: 0.2,
-              fill: "none",
             }}
+            className={clsx("ring", CLASSES[status])}
           />
         )}
       </g>

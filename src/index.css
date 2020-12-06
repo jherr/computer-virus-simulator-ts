@@ -11,3 +11,33 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.sick {
+  fill: red;
+}
+.recovered {
+  fill: #666;
+}
+.healthy {
+  fill: darkblue;
+}
+.ring.healthy {
+  fill: none;
+  stroke: darkblue;
+}
+
+.under-attack {
+  animation: pulse 200ms infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    fill: darkblue;
+  }
+  50% {
+    fill: red;
+  }
+  100% {
+    fill: darkblue;
+  }
+}
